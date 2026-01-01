@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LIME - Link Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Container */
+    .container {
+      text-align: center;
+      z-index: 1;
+      width: 320px;
+    }
+
+    /* Glitch profile picture */
+    .pfp {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid white;
+      margin-bottom: 20px;
+      position: relative;
+      animation: glitch 1s infinite;
+    }
+
+    @keyframes glitch {
+      0% {transform: translate(0,0);}
+      20% {transform: translate(-2px,2px);}
+      40% {transform: translate(2px,-2px);}
+      60% {transform: translate(-2px,-2px);}
+      80% {transform: translate(2px,2px);}
+      100% {transform: translate(0,0);}
+    }
+
+    /* Username glow */
+    h1 {
+      font-size: 28px;
+      color: #fff;
+      text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #fff,
+        0 0 40px #fff;
+      margin-bottom: 30px;
+    }
+
+    /* Link icons with glow border */
+    .link {
+      display: inline-block;
+      text-decoration: none;
+      color: #fff;
+      padding: 10px;
+      margin: 12px 10px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px #fff;
+    }
+
+    .link img {
+      width: 40px;
+      height: 40px;
+      display: block;
+      border-radius: 50%;
+    }
+
+    .link:hover {
+      box-shadow: 0 0 20px #fff, 0 0 40px #fff;
+      transform: scale(1.2);
+    }
+
+    /* Responsive */
+    @media (max-width: 400px) {
+      .container {width: 90%;}
+      .pfp {width: 100px; height: 100px;}
+      h1 {font-size: 24px;}
+      .link img {width: 35px; height: 35px;}
+    }
+
+    /* Bow style */
+    .bow {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      opacity: 0.8;
+      clip-path: polygon(
+        50% 0%, 60% 25%, 100% 25%, 70% 50%,
+        85% 100%, 50% 75%, 15% 100%, 30% 50%,
+        0% 25%, 40% 25%
+      );
+      pointer-events: none;
+      box-shadow: 0 0 8px #fff, 0 0 12px #fff, 0 0 20px #fff;
+    }
+
+    /* Trail particle style */
+    .trail {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0.7;
+      pointer-events: none;
+      filter: blur(2px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <!-- Profile picture -->
+    <img src="pfp.png.png" class="pfp" alt="LIME Profile Picture">
+
+    <!-- Username -->
+    <h1>LIME</h1>
+
+    <!-- Links with local icons -->
+    <a href="https://discord.com/users/1426141068226985997" class="link" target="_blank">
+      <img src="discord.jpg" alt="Discord">
+    </a>
+
+    <a href="https://open.spotify.com/playlist/0JwmzZt6o9Oj8DP4S8qJsM?si=d229673ae7e0456f&pt=ceba80035fabadfd8bb50c955fef91e6" class="link" target="_blank">
+      <img src="spotify.jfif" alt="Spotify">
+    </a>
+  </div>
+
+  <!-- JavaScript for glowing bows with trails -->
+  <script>
+    const totalBows = 25;
+
+    function createBow() {
+      const bow = document.createElement('div');
+      bow.classList.add('bow');
+
+      // Random size
+      const size = Math.random() * 20 + 10;
+      bow.style.width = `${size}px`;
+      bow.style.height = `${size}px`;
+
+      // Random position
+      bow.style.left = Math.random() * 100 + 'vw';
+      bow.style.top = Math.random() * 100 + 'vh';
+
+      document.body.appendChild(bow);
+
+      const duration = Math.random() * 4 + 3; // 3s to 7s
+
+      animateBow(bow, duration);
+    }
+
+    function animateBow(bow, duration) {
+      let start = Date.now();
+      const startX = parseFloat(bow.style.left);
+      const startY = parseFloat(bow.style.top);
+      function step() {
+        const now = Date.now();
+        const progress = ((now - start) / (duration * 1000)) % 1;
+        const rotate = progress * 360;
+        const newY = startY - progress * (startY + 50);
+        bow.style.transform = `translateY(${newY}px) rotate(${rotate}deg)`;
+
+        // Create trail particle
+        if (Math.random() < 0.3) { // 30% chance per frame
+          createTrail(bow, startX, startY + (progress * (startY + 50)));
+        }
+
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    function createTrail(bow, x, y) {
+      const trail = document.createElement('div');
+      trail.classList.add('trail');
+      trail.style.left = `${x}vw`;
+      trail.style.top = `${y}px`;
+      const size = Math.random() * 4 + 2;
+      trail.style.width = `${size}px`;
+      trail.style.height = `${size}px`;
+      document.body.appendChild(trail);
+
+      // Animate fade out
+      const fadeDuration = Math.random() * 1000 + 500;
+      let opacity = 0.7;
+      const startTime = Date.now();
+
+      function fade() {
+        const elapsed = Date.now() - startTime;
+        if (elapsed < fadeDuration) {
+          trail.style.opacity = opacity * (1 - elapsed / fadeDuration);
+          requestAnimationFrame(fade);
+        } else {
+          trail.remove();
+        }
+      }
+      fade();
+    }
+
+    // Initial bows
+    for (let i = 0; i < totalBows; i++) {
+      createBow();
+    }
+
+    // Spawn new bows continuously
+    setInterval(createBow, 1200);
+  </script>
+
+</body>
+</html>
